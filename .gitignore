@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.venv/
+.venv_wanrs/
+
+# OS
+.DS_Store
+
+# ML models / large artifacts
+*.pkl
+*.h5
+*.joblib
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+
+
