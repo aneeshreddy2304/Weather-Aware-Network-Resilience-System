@@ -21,9 +21,38 @@ Weather can affect radio and satellite communication in different ways. WANRS br
 
 ## System architecture
 
-![Weather-Aware Network Resilience System architecture — system components and principal workflows](docs/architecture-overview.svg)
+```mermaid
+flowchart TB
+    subgraph Weather["Weather acquisition"]
+        Cities["Configured city coordinates"]
+        OpenMeteo["Open-Meteo hourly API"]
+        Fetch["core.py weather fetchers"]
+        Cities --> Fetch
+        OpenMeteo --> Fetch
+    end
 
-The diagram organizes the major flows into aligned lanes to make their responsibilities and handoffs clear. It is a high-level view; individual modules may also communicate across lanes.
+    subgraph Offline["Model preparation"]
+        Simulator["Rule-based network metric simulator<br/>mmWave • Sub6 • Satellite"]
+        Training["Training dataset builder"]
+        Regressors["Saved predictive model artifacts"]
+        Fetch --> Simulator --> Training --> Regressors
+    end
+
+    subgraph DecisionApp["Streamlit decision-support app"]
+        Controls["City and network-type controls"]
+        Current["Current and near-future weather"]
+        Inference["Model inference"]
+        Risk["Risk thresholds and decision engine"]
+        View["Forecast, risk, and recommended actions"]
+        History[("data/history.csv")]
+        Controls --> Current --> Inference --> Risk --> View
+        Risk --> History
+    end
+
+    Fetch --> Current
+    Regressors --> Inference
+```
+
 
 ### How it works
 
